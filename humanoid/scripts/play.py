@@ -119,7 +119,7 @@ def play(args):
         )
         dir = os.path.join(
             experiment_dir,
-            datetime.now().strftime("%b%d_%H-%M-%S") + args.run_name + ".mp4",
+            datetime.now().strftime("%b%d_%H-%M-%S") + ".mp4",
         )
         if not os.path.exists(video_dir):
             os.mkdir(video_dir)

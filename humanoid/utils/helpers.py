@@ -182,7 +182,6 @@ def get_args():
         {
             "name": "--run_name",
             "type": str,
-            "default": "",
             "help": "Name of the run. Overrides config file if provided.",
         },
         {

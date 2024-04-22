@@ -10,7 +10,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = 12
-        num_envs = 4096
+        num_envs = 1024
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
@@ -172,8 +172,8 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
     class domain_rand:
         randomize_friction = True
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True
-        added_mass_range = [-5.0, 5.0]
+        randomize_base_mass = False
+        added_mass_range = [-0.3, 0.3]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
@@ -193,18 +193,18 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.89
-        min_dist = 0.2
-        max_dist = 0.5
+        base_height_target = 0.3
+        min_dist = 0.06
+        max_dist = 0.15
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
+        target_feet_height = 0.04  # m
         cycle_time = 0.64  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 700  # forces above this value are penalized
+        max_contact_force = 50  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
@@ -248,9 +248,13 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         clip_observations = 18.0
         clip_actions = 18.0
 
+    class viewer:
+        pos = [-1, -0.5, 0.5]  # [m]
+        lookat = [0, 0, 0.3]  # [m]
+
 
 class ToddlerbotLegsCfgPPO(LeggedRobotCfgPPO):
-    seed = 5
+    seed = 3407
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
     class policy:
