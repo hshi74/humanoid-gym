@@ -10,7 +10,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = 12
-        num_envs = 1024
+        num_envs = 2048
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
@@ -227,7 +227,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
             # base pos
             default_joint_pos = 0.5
             orientation = 1.0
-            base_height = 0.2
+            base_height = 0.0  # 0.2
             base_acc = 0.2
             # energy
             action_smoothness = -0.002

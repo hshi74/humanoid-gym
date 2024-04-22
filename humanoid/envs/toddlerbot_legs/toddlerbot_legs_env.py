@@ -136,9 +136,10 @@ class ToddlerbotLegsEnv(LeggedRobot):
         self.ref_dof_pos[:, 4] = sin_pos_l * scale_1
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
-        self.ref_dof_pos[:, 8] = sin_pos_r * scale_1
-        self.ref_dof_pos[:, 9] = sin_pos_r * scale_2
-        self.ref_dof_pos[:, 10] = sin_pos_r * scale_1
+        # TODO: make sure this is correct
+        self.ref_dof_pos[:, 8] = -sin_pos_r * scale_1
+        self.ref_dof_pos[:, 9] = -sin_pos_r * scale_2
+        self.ref_dof_pos[:, 10] = -sin_pos_r * scale_1
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
 
@@ -294,6 +295,7 @@ class ToddlerbotLegsEnv(LeggedRobot):
             self.critic_history[i][env_ids] *= 0
 
     # ================================================ Rewards ================================================== #
+    # TODO: check this
     def _reward_joint_pos(self):
         """
         Calculates the reward based on the difference between the current joint positions and the target joint positions.
@@ -334,6 +336,7 @@ class ToddlerbotLegsEnv(LeggedRobot):
             torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)
         ) / 2
 
+    # TODO: check this
     def _reward_foot_slip(self):
         """
         Calculates the reward for minimizing foot slip. The reward is based on the contact forces
@@ -486,6 +489,7 @@ class ToddlerbotLegsEnv(LeggedRobot):
         ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])
         return torch.exp(-ang_vel_error * self.cfg.rewards.tracking_sigma)
 
+    # TODO: check this
     def _reward_feet_clearance(self):
         """
         Calculates reward based on the clearance of the swing leg from the ground during movement.
