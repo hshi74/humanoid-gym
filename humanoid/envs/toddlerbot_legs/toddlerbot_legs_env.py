@@ -38,9 +38,9 @@ from isaacgym.torch_utils import torch_rand_float
 # from collections import deque
 
 
-class XBotLFreeEnv(LeggedRobot):
+class ToddlerbotLegsEnv(LeggedRobot):
     """
-    XBotLFreeEnv is a class that represents a custom environment for a legged robot.
+    ToddlerbotLegsEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.

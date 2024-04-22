@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -29,24 +29,24 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
-from setuptools import find_packages
 from distutils.core import setup
 
+from setuptools import find_packages
+
 setup(
-    name='humanoid',
-    version='1.0.0',
-    author='Xinyang Gu',
+    name="humanoid",
+    version="1.0.0",
+    author="Xinyang Gu",
     license="BSD-3-Clause",
     packages=find_packages(),
-    author_email='zlw21gxy@gmail.com',
-    description='Isaac Gym environments for humanoid robot',
-    install_requires=['isaacgym',  # preview4
-                      'wandb',
-                      'tensorboard',
-                      'tqdm',
-                      'numpy==1.23.5',
-                      'opencv-python',
-                      'mujoco==2.3.6',
-                      'mujoco-python-viewer',
-                      'matplotlib']
+    author_email="zlw21gxy@gmail.com",
+    description="Isaac Gym environments for humanoid robot",
+    install_requires=[
+        "isaacgym",  # preview4
+        "wandb",
+        "tensorboard",
+        "tqdm",
+        "opencv-python",
+        "matplotlib",
+    ],
 )

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -30,13 +30,17 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 
-from humanoid import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
-from .base.legged_robot import LeggedRobot
+from humanoid.utils.task_registry import task_registry
 
 from .custom.humanoid_config import XBotLCfg, XBotLCfgPPO
 from .custom.humanoid_env import XBotLFreeEnv
+from .toddlerbot_legs.toddlerbot_legs_config import (
+    ToddlerbotLegsCfg,
+    ToddlerbotLegsCfgPPO,
+)
+from .toddlerbot_legs.toddlerbot_legs_env import ToddlerbotLegsEnv
 
-from humanoid.utils.task_registry import task_registry
-
-
-task_registry.register( "humanoid_ppo", XBotLFreeEnv, XBotLCfg(), XBotLCfgPPO() )
+task_registry.register("humanoid_ppo", XBotLFreeEnv, XBotLCfg(), XBotLCfgPPO())
+task_registry.register(
+    "toddlerbot_legs", ToddlerbotLegsEnv, ToddlerbotLegsCfg(), ToddlerbotLegsCfgPPO()
+)

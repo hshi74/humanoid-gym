@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -30,22 +30,23 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 import os
-import time
-import torch
-import wandb
 import statistics
+import time
 from collections import deque
 from datetime import datetime
-from .ppo import PPO
-from .actor_critic import ActorCritic
-from humanoid.algo.vec_env import VecEnv
+
+import torch
 from torch.utils.tensorboard import SummaryWriter
+
+import wandb
+from humanoid.algo.vec_env import VecEnv
+
+from .actor_critic import ActorCritic
+from .ppo import PPO
 
 
 class OnPolicyRunner:
-
     def __init__(self, env: VecEnv, train_cfg, log_dir=None, device="cpu"):
-
         self.cfg = train_cfg["runner"]
         self.alg_cfg = train_cfg["algorithm"]
         self.policy_cfg = train_cfg["policy"]
@@ -94,7 +95,7 @@ class OnPolicyRunner:
         # initialize writer
         if self.log_dir is not None and self.writer is None:
             wandb.init(
-                project="XBot",
+                project="ToddlerBot",
                 sync_tensorboard=True,
                 name=self.wandb_run_name,
                 config=self.all_cfg,
@@ -181,7 +182,7 @@ class OnPolicyRunner:
         self.tot_time += locs["collection_time"] + locs["learn_time"]
         iteration_time = locs["collection_time"] + locs["learn_time"]
 
-        ep_string = f""
+        ep_string = ""
         if locs["ep_infos"]:
             for key in locs["ep_infos"][0]:
                 infotensor = torch.tensor([], device=self.device)

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -29,15 +29,16 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
-import os
 import copy
-import torch
-import numpy as np
+import os
 import random
-from isaacgym import gymapi
-from isaacgym import gymutil
 
-from humanoid import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
+import numpy as np
+from isaacgym import gymapi, gymutil
+
+pass  # This is a dummy line to force the import order
+
+import torch  # noqa: E402
 
 
 def class_to_dict(obj) -> dict:
@@ -114,8 +115,9 @@ def get_load_path(root, load_run=-1, checkpoint=-1):
         if "exported" in runs:
             runs.remove("exported")
         last_run = os.path.join(root, runs[-1])
-    except:
+    except Exception:
         raise ValueError("No runs in this directory: " + root)
+
     if load_run == -1:
         load_run = last_run
     else:
@@ -180,6 +182,7 @@ def get_args():
         {
             "name": "--run_name",
             "type": str,
+            "default": "",
             "help": "Name of the run. Overrides config file if provided.",
         },
         {

@@ -1,43 +1,8 @@
-# SPDX-License-Identifier: BSD-3-Clause
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice, this
-# list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
-#
-# 3. Neither the name of the copyright holder nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
-
-
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 
-class XBotLCfg(LeggedRobotCfg):
-    """
-    Configuration class for the XBotL humanoid robot.
-    """
-
+class ToddlerbotLegsCfg(LeggedRobotCfg):
     class env(LeggedRobotCfg.env):
-        # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 47
@@ -45,7 +10,7 @@ class XBotLCfg(LeggedRobotCfg):
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = 12
-        num_envs = 1024
+        num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
@@ -56,14 +21,30 @@ class XBotLCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = "{LEGGED_GYM_ROOT_DIR}/resources/robots/XBot/urdf/XBot-L.urdf"
+        file = "{LEGGED_GYM_ROOT_DIR}/../../robot_descriptions/toddlerbot_legs/toddlerbot_legs_isaac.urdf"
 
-        name = "XBot-L"
-        foot_name = "ankle_roll"
-        knee_name = "knee"
+        name = "toddlerbot_legs"
+        foot_name = "ank_roll_link"
+        knee_name = "calf_link"
 
-        terminate_after_contacts_on = ["base_link"]
-        penalize_contacts_on = ["base_link"]
+        terminate_after_contacts_on = [
+            "body_link",
+            "hip_roll_link",
+            "left_hip_pitch_link",
+            "left_calf_link",
+            "hip_roll_link_2",
+            "right_hip_pitch_link",
+            "right_calf_link",
+        ]
+        penalize_contacts_on = [
+            "body_link",
+            "hip_roll_link",
+            "left_hip_pitch_link",
+            "left_calf_link",
+            "hip_roll_link_2",
+            "right_hip_pitch_link",
+            "right_calf_link",
+        ]
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
@@ -99,40 +80,71 @@ class XBotLCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.95]
+        pos = [0.0, 0.0, 0.0]  # x,y,z [m]
 
         default_joint_angles = {  # = target angles [rad] when action = 0.0
-            "left_leg_roll_joint": -0.0,
-            "left_leg_yaw_joint": -0.0,
-            "left_leg_pitch_joint": 0.0,
-            "left_knee_joint": 0.0,
-            "left_ankle_pitch_joint": 0.0,
-            "left_ankle_roll_joint": 0.0,
-            "right_leg_roll_joint": 0.0,
-            "right_leg_yaw_joint": 0.0,
-            "right_leg_pitch_joint": -0.0,
-            "right_knee_joint": -0.0,
-            "right_ankle_pitch_joint": -0.0,
-            "right_ankle_roll_joint": 0.0,
+            "left_hip_yaw": 0.0,
+            "left_hip_roll": 0.0,
+            "left_hip_pitch": 0.0,
+            "left_knee": 0.0,
+            "left_ank_pitch": 0.0,
+            "left_ank_roll": 0.0,
+            "right_hip_yaw": 0.0,
+            "right_hip_roll": 0.0,
+            "right_hip_pitch": -0.0,
+            "right_knee": -0.0,
+            "right_ank_pitch": -0.0,
+            "right_ank_roll": 0.0,
+            # "left_sho_pitch": 0.0,
+            # "left_sho_roll": -1.57,
+            # "left_elb": 0.0,
+            # "right_sho_pitch": 0.0,
+            # "right_sho_roll": 1.57,
+            # "right_elb": 0.0,
         }
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
         stiffness = {
-            "leg_roll": 200.0,
-            "leg_pitch": 350.0,
-            "leg_yaw": 200.0,
-            "knee": 350.0,
-            "ankle": 15,
-        }
+            "left_hip_yaw": 3.125,
+            "left_hip_roll": 26.0,
+            "left_hip_pitch": 13.0,
+            "left_knee": 40.0,
+            "left_ank_pitch": 10.0,
+            "left_ank_roll": 10.0,
+            "right_hip_yaw": 3.125,
+            "right_hip_roll": 26.0,
+            "right_hip_pitch": 13.0,
+            "right_knee": 40.0,
+            "right_ank_pitch": 10.0,
+            "right_ank_roll": 10.0,
+            # "left_sho_pitch": 100.0,
+            # "left_sho_roll": 100.0,
+            # "left_elb": 100.0,
+            # "right_sho_pitch": 100.0,
+            # "right_sho_roll": 100.0,
+            # "right_elb": 100.0,
+        }  # [N*m/rad]
         damping = {
-            "leg_roll": 10,
-            "leg_pitch": 10,
-            "leg_yaw": 10,
-            "knee": 10,
-            "ankle": 10,
-        }
-
+            "left_hip_yaw": 0.077,
+            "left_hip_roll": 3.122,
+            "left_hip_pitch": 1.286,
+            "left_knee": 1.142,
+            "left_ank_pitch": 0.523,
+            "left_ank_roll": 0.583,
+            "right_hip_yaw": 0.077,
+            "right_hip_roll": 3.122,
+            "right_hip_pitch": 1.286,
+            "right_knee": 1.142,
+            "right_ank_pitch": 0.523,
+            "right_ank_roll": 0.583,
+            # "left_sho_pitch": 4.0,
+            # "left_sho_roll": 4.0,
+            # "left_elb": 4.0,
+            # "right_sho_pitch": 4.0,
+            # "right_sho_roll": 4.0,
+            # "right_elb": 4.0,
+        }  # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -237,7 +249,7 @@ class XBotLCfg(LeggedRobotCfg):
         clip_actions = 18.0
 
 
-class XBotLCfgPPO(LeggedRobotCfgPPO):
+class ToddlerbotLegsCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -262,8 +274,8 @@ class XBotLCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "XBot_ppo"
-        run_name = ""
+        experiment_name = "walking_ppo_toddlerbot_legs"
+        run_name = "v0.1"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
