@@ -1,7 +1,7 @@
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 
-class ToddlerbotLegsCfg(LeggedRobotCfg):
+class {{ robot_name_capitalized }}Cfg(LeggedRobotCfg):
     class env(LeggedRobotCfg.env):
         frame_stack = 15
         c_frame_stack = 3
@@ -9,7 +9,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
-        num_actions = 12
+        num_actions = {{ num_actions }}
         num_envs = 1024
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -21,30 +21,14 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = "{LEGGED_GYM_ROOT_DIR}/../../robot_descriptions/toddlerbot_legs/toddlerbot_legs_isaac.urdf"
+        file = "{LEGGED_GYM_ROOT_DIR}/{{ urdf_relpath }}"
 
-        name = "toddlerbot_legs"
-        foot_name = "ank_roll_link"
-        knee_name = "calf_link"
+        name = "{{ robot_name }}"
+        foot_name = "{{ foot_name }}"
+        knee_name = "{{ knee_name }}"
 
-        terminate_after_contacts_on = [
-            "body_link",
-            "hip_roll_link",
-            "left_hip_pitch_link",
-            "left_calf_link",
-            "hip_roll_link_2",
-            "right_hip_pitch_link",
-            "right_calf_link",
-        ]
-        penalize_contacts_on = [
-            "body_link",
-            "hip_roll_link",
-            "left_hip_pitch_link",
-            "left_calf_link",
-            "hip_roll_link_2",
-            "right_hip_pitch_link",
-            "right_calf_link",
-        ]
+        terminate_after_contacts_on = {{ terminate_after_contacts_on }}
+        penalize_contacts_on = {{ terminate_after_contacts_on }}
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
@@ -83,51 +67,21 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         pos = [0.0, 0.0, 0.0]  # x,y,z [m]
 
         default_joint_angles = {  # = target angles [rad] when action = 0.0
-            "left_hip_yaw": 0.0,
-            "left_hip_roll": 0.0,
-            "left_hip_pitch": 0.325,
-            "left_knee": 0.65,
-            "left_ank_pitch": 0.325,
-            "left_ank_roll": 0.0,
-            "right_hip_yaw": 0.0,
-            "right_hip_roll": 0.0,
-            "right_hip_pitch": -0.325,
-            "right_knee": -0.65,
-            "right_ank_pitch": -0.325,
-            "right_ank_roll": 0.0,
+            {% for key, value in default_joint_angles.items() %}"{{ key }}": {{ value }},
+            {% endfor %}
         }
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
         stiffness = {
-            "left_hip_yaw": 3.125,
-            "left_hip_roll": 26.0,
-            "left_hip_pitch": 13.0,
-            "left_knee": 40.0,
-            "left_ank_pitch": 10.0,
-            "left_ank_roll": 10.0,
-            "right_hip_yaw": 3.125,
-            "right_hip_roll": 26.0,
-            "right_hip_pitch": 13.0,
-            "right_knee": 40.0,
-            "right_ank_pitch": 10.0,
-            "right_ank_roll": 10.0,
+            {% for key, value in motor_kp_dict.items() %}"{{ key }}": {{ value }},
+            {% endfor %}
         }  # [N*m/rad]
         damping = {
-            "left_hip_yaw": 0.0,
-            "left_hip_roll": 0.0,
-            "left_hip_pitch": 0.0,
-            "left_knee": 0.0,
-            "left_ank_pitch": 0.0,
-            "left_ank_roll": 0.0,
-            "right_hip_yaw": 0.0,
-            "right_hip_roll": 0.0,
-            "right_hip_pitch": 0.0,
-            "right_knee": 0.0,
-            "right_ank_pitch": 0.0,
-            "right_ank_roll": 0.0,
+            {% for key, value in motor_kv_dict.items() %}"{{ key }}": {{ value }},
+            {% endfor %}
         }  # [N*m*s/rad]
-
+        
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -175,40 +129,13 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
-    class rewards:
-        base_height_target = 0.3
-        min_dist = 0.06
-        max_dist = 0.15
-        target_joint_pos_scale = 0.17
-        target_feet_height = 0.04
-        cycle_time = 0.64
-        only_positive_rewards = True
-        tracking_sigma = 5
-        max_contact_force = 50
+    class rewards:        
+        {% for key, value in rewards.items() %}{{ key }} = {{ value }}
+        {% endfor %}
 
         class scales:
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
-            feet_air_time = 1.0
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            feet_contact_forces = -0.01
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5
-            low_speed = 0.2
-            track_vel_hard = 0.5
-            default_joint_pos = 0.5
-            orientation = 1.0
-            base_height = 0.2
-            base_acc = 0.2
-            action_smoothness = -0.002
-            torques = -1e-05
-            dof_vel = -0.0005
-            dof_acc = -1e-07
-            collision = -1.0
+            {% for key, value in reward_scales.items() %}{{ key }} = {{ value }}
+            {% endfor %}
 
     class normalization:
         class obs_scales:
@@ -252,8 +179,8 @@ class ToddlerbotLegsCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "walk_toddlerbot_legs_isaac"
-        run_name = "v0.1"
+        experiment_name = "{{ experiment_name }}"
+        run_name = "{{ run_name }}"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
