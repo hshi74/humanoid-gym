@@ -77,7 +77,10 @@ class ToddlerbotLegsEnv(LeggedRobot):
         self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless
     ):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
-        self.last_feet_z = 0.05
+        self.feet_z = 0.0395  # 0.05, default feet height
+        self.contact_force_threshold = 5.0
+        self.last_feet_z = self.feet_z
+
         self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
         self.reset_idx(torch.tensor(range(self.num_envs), device=self.device))
         self.compute_observations()
@@ -213,7 +216,9 @@ class ToddlerbotLegsEnv(LeggedRobot):
         cos_pos = torch.cos(2 * torch.pi * phase).unsqueeze(1)
 
         stance_mask = self._get_gait_phase()
-        contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        contact_mask = (
+            self.contact_forces[:, self.feet_indices, 2] > self.contact_force_threshold
+        )
 
         self.command_input = torch.cat(
             (sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1
@@ -345,7 +350,9 @@ class ToddlerbotLegsEnv(LeggedRobot):
         and the speed of the feet. A contact threshold is used to determine if the foot is in contact
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        contact = (
+            self.contact_forces[:, self.feet_indices, 2] > self.contact_force_threshold
+        )
         foot_speed_norm = torch.norm(
             self.rigid_state[:, self.feet_indices, 10:12], dim=2
         )
@@ -359,7 +366,9 @@ class ToddlerbotLegsEnv(LeggedRobot):
         checking the first contact with the ground after being in the air. The air time is
         limited to a maximum value for reward calculation.
         """
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        contact = (
+            self.contact_forces[:, self.feet_indices, 2] > self.contact_force_threshold
+        )
         stance_mask = self._get_gait_phase()
         self.contact_filt = torch.logical_or(
             torch.logical_or(contact, stance_mask), self.last_contacts
@@ -376,7 +385,9 @@ class ToddlerbotLegsEnv(LeggedRobot):
         Calculates a reward based on the number of feet contacts aligning with the gait phase.
         Rewards or penalizes depending on whether the foot contact matches the expected gait phase.
         """
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        contact = (
+            self.contact_forces[:, self.feet_indices, 2] > self.contact_force_threshold
+        )
         stance_mask = self._get_gait_phase()
         reward = torch.where(contact == stance_mask, 1.0, -0.3)
         return torch.mean(reward, dim=1)
@@ -427,7 +438,7 @@ class ToddlerbotLegsEnv(LeggedRobot):
         measured_heights = torch.sum(
             self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1
         ) / torch.sum(stance_mask, dim=1)
-        base_height = self.root_states[:, 2] - (measured_heights - 0.05)
+        base_height = self.root_states[:, 2] - (measured_heights - self.feet_z)
         return torch.exp(
             -torch.abs(base_height - self.cfg.rewards.base_height_target) * 100
         )
@@ -498,10 +509,12 @@ class ToddlerbotLegsEnv(LeggedRobot):
         Encourages appropriate lift of the feet during the swing phase of the gait.
         """
         # Compute feet contact mask
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        contact = (
+            self.contact_forces[:, self.feet_indices, 2] > self.contact_force_threshold
+        )
 
         # Get the z-position of the feet and compute the change in z-position
-        feet_z = self.rigid_state[:, self.feet_indices, 2] - 0.05
+        feet_z = self.rigid_state[:, self.feet_indices, 2] - self.feet_z
         delta_z = feet_z - self.last_feet_z
         self.feet_height += delta_z
         self.last_feet_z = feet_z

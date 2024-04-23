@@ -10,7 +10,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = 12
-        num_envs = 1024
+        num_envs = 1024  # 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
@@ -248,7 +248,7 @@ class ToddlerbotLegsCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 1501  # 3001
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
