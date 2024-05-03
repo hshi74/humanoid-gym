@@ -91,7 +91,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
             "left_ank_roll": 0.0,
             "right_hip_yaw": 0.0,
             "right_hip_roll": 0.0,
-            "right_hip_pitch": -0.325,
+            "right_hip_pitch": 0.325,
             "right_knee": -0.65,
             "right_ank_pitch": -0.325,
             "right_ank_roll": 0.0,
