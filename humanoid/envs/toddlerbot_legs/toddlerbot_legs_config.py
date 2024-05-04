@@ -10,7 +10,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         single_num_privileged_obs = 73
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = 12
-        num_envs = 1024  # 4096
+        num_envs = 8192  # 1024
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
@@ -156,7 +156,7 @@ class ToddlerbotLegsCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
         randomize_base_mass = True
-        added_mass_range = [-0.2, 0.2]
+        added_mass_range = [-0.1, 0.1]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
@@ -248,7 +248,7 @@ class ToddlerbotLegsCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 1501  # 3001
+        max_iterations = 3001  # 1501
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
